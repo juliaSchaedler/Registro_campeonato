@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Campeonatos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Plataforma de Campeonatos</h1>
+        <div id="userInfo" class="user-info"></div>
+    </header>
+
+    <main class="container">
+        <div id="authContainer">
+            <section id="loginSection" class="card">
+                <h2>Entrar</h2>
+                <form id="loginForm">
+                    <input type="text" id="loginUsername" placeholder="Nome de usuário" required>
+                    <input type="password" id="loginPassword" placeholder="Senha" required>
+                    <button type="submit">Entrar</button>
+                </form>
+                <p id="authMessage" class="message"></p>
+                <p class="toggle-link">Não tem uma conta? <a href="#" id="showRegister">Registre-se</a></p>
+            </section>
+
+            <section id="registerSection" class="card hidden">
+                <h2>Registrar-se</h2>
+                <form id="registerForm">
+                    <input type="text" id="regUsername" placeholder="Nome de usuário" required>
+                    <input type="password" id="regPassword" placeholder="Senha" required>
+                    <button type="submit">Registrar</button>
+                </form>
+                <p id="regMessage" class="message"></p>
+                <p class="toggle-link">Já tem uma conta? <a href="#" id="showLogin">Faça o login</a></p>
+            </section>
+        </div>
+
+        <div id="mainContent" class="hidden">
+            <section id="tournamentsSection" class="card">
+                <h2>Campeonatos Disponíveis</h2>
+                <ul id="tournamentList"></ul>
+                <p id="tournamentMessage" class="message"></p>
+            </section>
+
+            <section id="tournamentDetailSection" class="card hidden">
+                <button id="backToListBtn">&larr; Voltar para a lista</button>
+                <h2 id="detailTournamentName"></h2>
+                <div class="details-grid">
+                    <div id="matches-column">
+                        <h3>Partidas</h3>
+                        <div id="matchList"></div>
+                        <h4>Criar Nova Partida</h4>
+                        <form id="createMatchForm">
+                            <select id="player1Select" required></select>
+                            <span>vs</span>
+                            <select id="player2Select" required></select>
+                            <button type="submit">Criar</button>
+                        </form>
+                         <p id="matchMessage" class="message"></p>
+                    </div>
+                    <div id="ranking-column">
+                        <h3>Ranking</h3>
+                        <table id="rankingTable">
+                            <thead><tr><th>Pos.</th><th>Jogador</th><th>Pontos</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="notificationsSection" class="card">
+                <h2>Notificações</h2>
+                <ul id="notificationList"></ul>
+            </section>
+        </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
