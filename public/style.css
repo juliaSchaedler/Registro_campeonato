@@ -1,0 +1,140 @@
+/* style.css (Versão 2.0) */
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --background-color: #ecf0f1;
+    --card-background: #ffffff;
+    --text-color: #333;
+    --success-color: #2ecc71;
+    --error-color: #e74c3c;
+    --disabled-color: #bdc3c7;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    line-height: 1.6;
+}
+
+header {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 1rem 2rem;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    position: relative;
+}
+
+.user-info {
+    position: absolute;
+    top: 50%;
+    right: 2rem;
+    transform: translateY(-50%);
+    font-size: 0.9em;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.card {
+    background-color: var(--card-background);
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+form { display: flex; flex-direction: column; }
+input, select {
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.1s;
+}
+button:hover { background-color: #2980b9; }
+button:active { transform: scale(0.98); }
+button:disabled { background-color: var(--disabled-color); cursor: not-allowed; }
+
+ul { list-style-type: none; padding: 0; }
+.message { text-align: center; margin-top: 1rem; font-weight: bold; min-height: 1.2em; }
+.hidden { display: none; }
+.toggle-link { text-align: center; margin-top: 1rem; font-size: 0.9em; }
+.toggle-link a { color: var(--primary-color); text-decoration: none; }
+
+/* Estilos Específicos */
+#tournamentList li {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+#tournamentList li:hover { background-color: #e9e9e9; }
+
+#backToListBtn { margin-bottom: 1.5rem; background-color: var(--secondary-color); }
+.details-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+#matchList .match-item {
+    padding: 0.8rem;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+#matchList .match-item.pending { border-left: 4px solid #f1c40f; }
+#matchList .match-item.finalizada { border-left: 4px solid var(--success-color); background-color: #f8f9f9; }
+
+#createMatchForm {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+#createMatchForm select { flex: 1; }
+
+#rankingTable { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+#rankingTable th, #rankingTable td {
+    padding: 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+#rankingTable th { background-color: #f2f2f2; }
+#rankingTable tr:nth-child(even) { background-color: #fafafa; }
+
+#notificationList li {
+    background-color: #eaf5ff;
+    padding: 0.8rem;
+    border-left: 4px solid var(--primary-color);
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .details-grid { grid-template-columns: 1fr; }
+    .user-info { display: none; }
+}
