@@ -1,5 +1,3 @@
-// server.js (Versão 2.0 - Completa)
-
 const express = require('express');
 const path = require('path');
 const app = express();
