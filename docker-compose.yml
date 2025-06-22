@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # Serviço do Banco de Dados MySQL
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      # Expor a porta 3306 para debug, se necessário (opcional)
+      - '3306:3306'
+    volumes:
+      # Persiste os dados do banco de dados em um volume nomeado
+      - db_data:/var/lib/mysql
+      # Executa nosso script SQL na inicialização para criar as tabelas
+      - ./database.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+  # Serviço da Aplicação Node.js
+  app:
+    build: .
+    container_name: node_app
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_NAME: ${MYSQL_DATABASE}
+      PORT: 3000
+    networks:
+      - app-network
+
+# Define a rede compartilhada
+networks:
+  app-network:
+    driver: bridge
+
+# Define o volume nomeado para persistência de dados
+volumes:
+  db_data:
