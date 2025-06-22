@@ -1,4 +1,4 @@
-// server.js (Versão 3.2 - Formato de dados corrigido)
+
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
