@@ -1,5 +1,3 @@
-// public/script.js (Versão 2.1 - Com o ajuste de "Entrar no Torneio")
-
 document.addEventListener('DOMContentLoaded', () => {
     // --- Seletores de Elementos ---
     const loginSection = document.getElementById('loginSection');
@@ -109,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- API: CAMPEONATOS E PARTIDAS ---
 
-    // MODIFICADO: Listener de eventos para a lista de campeonatos.
     // Lida tanto com o clique para entrar no torneio quanto para ver detalhes.
     tournamentList.addEventListener('click', (e) => {
         const target = e.target;
