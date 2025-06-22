@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Seletores de Elementos ---
+    
     const loginSection = document.getElementById('loginSection');
     const registerSection = document.getElementById('registerSection');
     const authContainer = document.getElementById('authContainer');
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const notificationList = document.getElementById('notificationList');
 
-    // --- Estado da Aplicação ---
+    // --- Estado da Aplicação (sem alterações) ---
     let currentUser = null;
     let currentTournamentId = null;
     let notificationInterval = null;
@@ -50,8 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
     backToListBtn.addEventListener('click', () => {
         tournamentDetailSection.classList.add('hidden');
         tournamentsSection.classList.remove('hidden');
+        tournamentMessage.textContent = ''; // Limpa a mensagem de sucesso
         currentTournamentId = null;
-        fetchTournaments(); // Atualiza a lista principal ao voltar
+        fetchTournaments();
     });
 
     function showMainApp(user) {
@@ -60,10 +61,10 @@ document.addEventListener('DOMContentLoaded', () => {
         mainContent.classList.remove('hidden');
         userInfo.textContent = `Logado como: ${user.username}`;
         fetchTournaments();
-        startNotificationPolling();
+        // startNotificationPolling(); // Descomente se quiser usar notificações
     }
 
-    // --- API: AUTENTICAÇÃO ---
+    // --- API: AUTENTICAÇÃO (sem alterações) ---
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const username = document.getElementById('regUsername').value;
@@ -106,55 +107,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- API: CAMPEONATOS E PARTIDAS ---
-
-    // Lida tanto com o clique para entrar no torneio quanto para ver detalhes.
     tournamentList.addEventListener('click', (e) => {
         const target = e.target;
-        // Se o clique foi no botão "Entrar"
         if (target.classList.contains('join-btn')) {
-            e.stopPropagation(); // Impede que o clique se propague para o <li>
+            e.stopPropagation();
             const tournamentId = target.dataset.tid;
             joinTournament(tournamentId);
         } 
-        // Se o clique foi no <li> (mas não no botão), mostra os detalhes
         else if (target.closest('li')) {
             const tournamentId = target.closest('li').dataset.tid;
             selectTournament(tournamentId);
         }
     });
 
-    // ADICIONADO: Função para entrar em um torneio
+    // <<<<<<< INÍCIO DA CORREÇÃO NO FRONT-END >>>>>>>
     async function joinTournament(tournamentId) {
         const response = await fetch(`/api/tournaments/${tournamentId}/join`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId: currentUser.id })
         });
-        const result = await response.json();
+        
         if (response.ok) {
-            tournamentMessage.textContent = 'Inscrição realizada com sucesso!';
-            tournamentMessage.style.color = 'var(--success-color)';
-            fetchTournaments(); // Atualiza a lista para mostrar o botão como "Inscrito"
+            // SUCESSO! Em vez de recarregar a lista, vamos direto para os detalhes.
+            selectTournament(tournamentId);
         } else {
+            const result = await response.json();
             tournamentMessage.textContent = result.message;
             tournamentMessage.style.color = 'var(--error-color)';
         }
     }
+    // <<<<<<< FIM DA CORREÇÃO NO FRONT-END >>>>>>>
 
     async function fetchTournaments() {
         const response = await fetch('/api/tournaments');
         const tournaments = await response.json();
-        tournamentList.innerHTML = '';
+        tournamentList.innerHTML = ''; // Limpa a lista antiga
         tournaments.forEach(t => {
             const li = document.createElement('li');
-            li.dataset.tid = t.id; // Adiciona o ID ao elemento li para referência
+            li.dataset.tid = t.id;
 
-            // Verifica se o usuário atual já está inscrito
+            // Esta verificação agora vai funcionar, pois o back-end envia o formato correto
             const isParticipant = t.participants.some(p => p.id === currentUser.id);
 
-            // MODIFICADO: O innerHTML agora inclui o botão de forma inteligente
+            // A contagem de participantes virá do tamanho do array
+            const participantsCount = t.participants.length;
+
             li.innerHTML = `
-                <span><strong>${t.name}</strong> (${t.game}) - ${t.participants.length} participante(s)</span>
+                <span><strong>${t.name}</strong> (${t.game}) - ${participantsCount} participante(s)</span>
                 <button class="join-btn" data-tid="${t.id}" ${isParticipant ? 'disabled' : ''}>
                     ${isParticipant ? 'Inscrito' : 'Entrar'}
                 </button>
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentTournamentId = id;
         tournamentsSection.classList.add('hidden');
         tournamentDetailSection.classList.remove('hidden');
-        fetchTournamentDetails();
+        await fetchTournamentDetails();
     }
     
     async function fetchTournamentDetails() {
@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (response.ok) {
             matchMessage.textContent = 'Partida criada com sucesso!';
             matchMessage.style.color = 'var(--success-color)';
-            fetchTournamentDetails(); // Re-renderiza tudo
+            fetchTournamentDetails();
         } else {
             matchMessage.textContent = result.message;
             matchMessage.style.color = 'var(--error-color)';
@@ -201,17 +201,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function recordResult(matchId) {
         const matchElement = document.getElementById(`match-${matchId}`);
+        const p1Id = parseInt(matchElement.dataset.p1);
         const p1Name = matchElement.querySelector('.p1').textContent;
+        const p2Id = parseInt(matchElement.dataset.p2);
         const p2Name = matchElement.querySelector('.p2').textContent;
 
         const winnerSelection = prompt(`Quem venceu a partida?\n1: ${p1Name}\n2: ${p2Name}\nDigite 1 ou 2:`);
         
         let winnerId;
-        if (winnerSelection === '1') {
-            winnerId = parseInt(matchElement.dataset.p1);
-        } else if (winnerSelection === '2') {
-            winnerId = parseInt(matchElement.dataset.p2);
-        } else {
+        if (winnerSelection === '1') winnerId = p1Id;
+        else if (winnerSelection === '2') winnerId = p2Id;
+        else {
             alert("Seleção inválida.");
             return;
         }
@@ -225,11 +225,8 @@ document.addEventListener('DOMContentLoaded', () => {
             body: JSON.stringify({ winnerId, score })
         });
         
-        if (response.ok) {
-            fetchTournamentDetails();
-        } else {
-            alert('Erro ao registrar resultado.');
-        }
+        if (response.ok) fetchTournamentDetails();
+        else alert('Erro ao registrar resultado.');
     }
 
     // --- RENDERIZAÇÃO ---
@@ -243,11 +240,11 @@ document.addEventListener('DOMContentLoaded', () => {
             matchDiv.id = `match-${m.id}`;
             matchDiv.dataset.p1 = m.player1.id;
             matchDiv.dataset.p2 = m.player2.id;
-
+            
             let content = `<span class="p1">${m.player1.username}</span> vs <span class="p2">${m.player2.username}</span>`;
             if (m.status === 'Finalizada') {
-                const winnerUsername = m.winnerId === m.player1.id ? m.player1.username : m.player2.username;
-                content += ` - <strong>Vencedor: ${winnerUsername} (${m.score})</strong>`;
+                const winnerIsP1 = m.winnerId === m.player1.id;
+                content += ` - <strong>Vencedor: ${winnerIsP1 ? m.player1.username : m.player2.username} (${m.score})</strong>`;
             } else {
                 content += ` <button onclick="recordResult(${m.id})">Registrar Resultado</button>`;
             }
@@ -267,24 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = rankingTable.insertRow();
             row.innerHTML = `<td>${index + 1}º</td><td>${p.username}</td><td>${p.points}</td>`;
         });
-    }
-
-    // --- NOTIFICAÇÕES ---
-    async function fetchNotifications() {
-        if (!currentUser) return;
-        const response = await fetch(`/api/notifications/${currentUser.id}`);
-        const notifications = await response.json();
-        notifications.forEach(n => {
-            const li = document.createElement('li');
-            li.textContent = n.message;
-            notificationList.prepend(li);
-        });
-    }
-    
-    function startNotificationPolling() {
-        fetchNotifications();
-        if (notificationInterval) clearInterval(notificationInterval);
-        notificationInterval = setInterval(fetchNotifications, 10000);
     }
     
     window.recordResult = recordResult;
